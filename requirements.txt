@@ -1,0 +1,19 @@
+# Google Form AutoFill and Submit - Requirements
+# Python 3.7+ required
+
+# Core dependency for HTTP requests
+requests>=2.31.0
+
+# Note: The following are standard library modules (no installation needed):
+# - argparse (standard library)
+# - json (standard library)
+# - logging (standard library)
+# - os (standard library)
+# - re (standard library)
+# - datetime (standard library)
+# - time (standard library)
+# - sys (standard library)
+# - random (standard library)
+# - dataclasses (standard library, Python 3.7+)
+# - typing (standard library, Python 3.5+)
+# - urllib.parse (standard library)

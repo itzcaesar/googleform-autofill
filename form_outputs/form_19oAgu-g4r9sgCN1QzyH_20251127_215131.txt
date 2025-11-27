@@ -1,0 +1,26 @@
+{
+    # Jenis Kelamin (required)
+    #   Options: ['Laki-laki', 'Perempuan']
+    "entry.683918022": "",
+    # Umur (required)
+    #   Option: any text
+    "entry.1150076374": "",
+    # Kepuasan terhadap tingkat kestabilan jaringan internet kampus (required)
+    #   Options: ['Sangat tidak puas', 'Tidak puas', 'Cukup puas', 'Puas', 'Sangat puas']
+    "entry.665382404": "",
+    # kepuasan terhadap Kecepatan internet kampus dalam mendukung pembelajaran (required)
+    #   Options: ['Sangat tidak puas', 'Tidak puas', 'Cukup puas', 'Puas', 'Sangat puas']
+    "entry.1986848692": "",
+    # Kepuasan terhadap jangkauan dan kekuatan sinyal Wi-Fi kampus (required)
+    #   Options: ['Sangat tidak puas', 'Tidak puas', 'Cukup puas', 'Puas', 'Sangat puas']
+    "entry.1330882863": "",
+    # Kepuasan terhadap kemudahan mengakses Wi-Fi kampus (required)
+    #   Options: ['Sangat tidak puas', 'Tidak puas', 'Cukup puas', 'Puas', 'Sangat puas']
+    "entry.1489732522": "",
+    # Seberapa sering frekuensi gangguan jaringan yang Anda rasakan?  (required)
+    #   Options: ['Selalu', 'Sering', 'Terkadang', 'Jarang', 'Sangat jarang']
+    "entry.1055468552": "",
+    # Page History
+    #   Options: from 0 to 2
+    "pageHistory": "0,1,2"
+}
