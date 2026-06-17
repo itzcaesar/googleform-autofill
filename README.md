@@ -32,6 +32,99 @@ It also includes a request body **generator** for those who prefer manual data i
 
 ---
 
+## ⚡ Easiest start (TUI)
+
+An interactive terminal menu (`tui.py`) wraps the whole tool — no flags to memorize. The launcher scripts create a local virtual environment, install dependencies, and open the menu on first run.
+
+**Windows (PowerShell):**
+```powershell
+.\run.ps1
+```
+
+**Windows (cmd / double-click):**
+```bat
+run.bat
+```
+
+**Any platform (venv already set up):**
+```bash
+python tui.py
+```
+
+From the menu you can set the form URL, **Preview fields** (read-only), do a **Dry run** to inspect the generated payload, edit settings (email, strategy, count, delay, required-only, progressive, age range), set per-field custom values, and **Submit**.
+
+`forms.gle` short links are supported — they're resolved to the full form URL automatically.
+
+**Saving settings:** menu options **8 (Save settings)** / **9 (Load settings)** persist your config (URL, email options, strategy, count, custom values, …) to `tui_settings.json`. Saved settings load automatically the next time you start the TUI.
+
+### Random Indonesian email
+
+When a form **collects email**, you can auto-generate a realistic Indonesian `@gmail.com` address instead of typing one — a fresh address per submission. Seven **styles** (eras):
+
+| Style | Who | Examples |
+|-------|-----|----------|
+| `classic` | full-name adults | `budi.setiawan98`, `iqbal.ramadhan.handayani`, `mutami` |
+| `professional` | clean, no/little digits | `fadil.pangestu`, `dewi.maulana`, `hadi.susanti` |
+| `millennial` | 1985–1999 birth years | `ibnu.rahman1987`, `budi.firmansyah95` |
+| `genz` | aesthetic / gamer / nickname | `itsshakira`, `rafa.luvr`, `n4ufal.ffx`, `cherryrara` |
+| `alpha` | very aesthetic + leetspeak | `4lvar0777`, `raih4n.sl33py`, `xxavi3rx`, `aqilaaaa` |
+| `chinese` | Chinese-Indonesian names | `vincentwijaya`, `ricky.tanoto`, `melissawibowo1991` |
+| `mix` *(default)* | weighted blend of all | — |
+
+Extra knobs:
+
+- **Gender** (`any` / `male` / `female`) — picks gender-appropriate given names.
+- **Seed** — a fixed integer makes the generated sequence reproducible across runs.
+- **Unique** — de-duplicates within a batch/preview.
+
+Names cover regional surnames (Javanese, Batak, etc.), compound names (`muhammad…`, `nur…`, Balinese `putu/kadek/…`), and birth-order prefixes. All output is strictly `@gmail.com` and obeys Gmail's rules (letters/numbers/dots only, 6–30 chars).
+
+- **TUI:** Settings → *Email settings* (toggle, style, gender, seed, unique). Menu **Preview sample emails** prints a list in any style/gender.
+- **CLI:** `--random-email` plus `--email-style {classic,professional,millennial,genz,alpha,chinese,mix}`, `--email-gender {any,male,female}`, `--email-seed N`.
+- **Standalone:** `python email_generator.py 20 alpha male` → 20 samples (`<count> [style] [gender]`).
+
+```bash
+python main.py https://forms.gle/XXXX --random-email --email-style genz --email-gender female --count 5
+```
+
+### Presets & extra submission settings
+
+The TUI has a **Presets** menu that applies a bundle of settings in one tap (URL and custom values are kept) — e.g. *Indo Gen Z survey*, *Gen Alpha (youngest)*, *Professional adults*, *Bulk realistic mixed*, *Required only fast*, *Reproducible (seed 42)*.
+
+New submission settings (TUI *Submission settings*, or CLI):
+
+- `--delay-jitter SEC` — random extra delay (0..jitter) per submission, to look less robotic.
+- `--timeout SEC` — request timeout.
+- `--stop-on-failure` — abort a batch on the first failed submission.
+
+### Age fields shown as ranges
+
+Some forms ask age as a **multiple-choice / dropdown** with range options (e.g. `<18`, `18–25`, `26–35`, `36–45`, `>45`) rather than a text box. With an **age range** set, the tool now picks the option(s) overlapping your range instead of choosing randomly:
+
+- `age 18-25` → ticks `18–25`
+- `age 26-45` → randomly among `26–35` and `36–45`
+
+It understands `<`, `>`, `≤`, `≥`, `+`, and hyphen/en-dash/em-dash separators. Same `age_range` also fills age **text** boxes. Toggle with TUI *Fill settings → Match age range to choices*, or CLI `--no-age-match` to disable.
+
+### "Choose more than one" (checkbox) fields
+
+Checkbox questions (the *"pilih lebih dari satu"* / select-multiple type) are fully supported — multiple choices are submitted as repeated form keys, exactly as Google Forms expects. By default the random strategy ticks **1–3** boxes per field; you can control this:
+
+- **TUI:** *Fill settings* → *Checkbox min/max selections*.
+- **CLI:** `--checkbox-min N` and `--checkbox-max N`.
+
+Counts are clamped to the number of available options (e.g. asking for 4–6 on a 3-option field ticks all 3). The fixed strategy ticks the first `checkbox-min` options.
+
+> Manual setup, if you'd rather not use the launcher:
+> ```bash
+> python -m venv .venv
+> .venv\Scripts\python -m pip install -r requirements.txt   # Windows
+> .venv/bin/python  -m pip install -r requirements.txt      # macOS/Linux
+> ```
+> On this machine the `python` command resolves through the `py` launcher (Python 3.14, uv-managed); use `py` in place of `python` if `python` isn't on PATH.
+
+---
+
 ## 📋 Table of Contents
 
 - [✨ Features](#-features)

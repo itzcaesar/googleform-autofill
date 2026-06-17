@@ -1,0 +1,14 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Generated form output / saved responses
+form_outputs/*.json
+
+# Saved TUI settings (user-specific)
+tui_settings.json

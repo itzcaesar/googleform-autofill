@@ -19,7 +19,7 @@ from urllib.parse import urlparse, parse_qs
 
 import requests
 
-import generator
+from . import generator
 
 # Constants for form data extraction
 ALL_DATA_FIELDS = "FB_PUBLIC_LOAD_DATA_"
