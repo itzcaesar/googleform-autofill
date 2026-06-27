@@ -300,7 +300,8 @@ class FillStrategy:
                  email_provider="auto",
                  calibration=None,
                  conditionals=None,
-                 anomaly_rate: float = 0.0):
+                 anomaly_rate: float = 0.0,
+                 fill_phone: bool = True):
         """
         Initialize fill strategy.
 
@@ -340,6 +341,8 @@ class FillStrategy:
         self.conditionals = conditionals
         # Fraction of submissions allowed a rare-but-legal demographic outlier.
         self.anomaly_rate = anomaly_rate
+        # Whether to fill phone/WhatsApp number fields (disable to leave blank).
+        self.fill_phone = fill_phone
         # A dedicated RNG so a seed yields a reproducible *sequence* across submissions
         self._email_rng = random.Random(email_seed) if email_seed is not None else None
         self._persona: Optional[Persona] = None
@@ -620,7 +623,7 @@ class RandomFillStrategy(FillStrategy):
             if is_name_field(entry_name):
                 return self._person_name()
             if is_phone_field(entry_name):
-                return self._phone_value()
+                return self._phone_value() if self.fill_phone else '-'
 
             responses = [
                 'This is a test response',
@@ -716,7 +719,8 @@ class FixedFillStrategy(FillStrategy):
                  email_provider="auto",
                  calibration=None,
                  conditionals=None,
-                 anomaly_rate: float = 0.0):
+                 anomaly_rate: float = 0.0,
+                 fill_phone: bool = True):
         """
         Initialize with fixed values.
 
@@ -736,7 +740,7 @@ class FixedFillStrategy(FillStrategy):
                          email_style, email_gender, email_seed,
                          checkbox_min, checkbox_max, match_age_options,
                          coherent_identity, email_provider,
-                         calibration, conditionals, anomaly_rate)
+                         calibration, conditionals, anomaly_rate, fill_phone)
         self.text_value = text_value
     
     def fill(self, type_id: Union[int, str], entry_id: Union[str, int], 
@@ -761,7 +765,7 @@ class FixedFillStrategy(FillStrategy):
             if is_name_field(entry_name):
                 return self._person_name()
             if is_phone_field(entry_name):
-                return self._phone_value()
+                return self._phone_value() if self.fill_phone else '-'
 
             return self.text_value
         
@@ -1213,7 +1217,8 @@ def main(
     coherent_identity: bool = True,
     email_provider="auto",
     preset: Optional[str] = None,
-    anomaly_rate: float = 0.0
+    anomaly_rate: float = 0.0,
+    fill_phone: bool = True
 ) -> bool:
     """
     Main function to fill and submit Google Form.
@@ -1283,6 +1288,7 @@ def main(
             calibration=calibration,
             conditionals=conditionals,
             anomaly_rate=anomaly_rate,
+            fill_phone=fill_phone,
         )
         if strategy == "fixed":
             fill_strat = FixedFillStrategy(**strat_kwargs)
@@ -1545,6 +1551,11 @@ Custom values JSON format:
              'demographic outlier, e.g. 0.03 for ~3%% (default: 0). Illegal '
              'combinations stay impossible regardless.'
     )
+    fill_group.add_argument(
+        '--no-phone',
+        action='store_true',
+        help='Leave phone/WhatsApp number fields blank instead of generating a number'
+    )
 
     # Submission options
     submit_group = parser.add_argument_group('Submission Options')
@@ -1690,7 +1701,8 @@ Custom values JSON format:
             coherent_identity=args.coherent_identity,
             email_provider=email_provider_arg,
             preset=args.preset,
-            anomaly_rate=args.anomaly_rate
+            anomaly_rate=args.anomaly_rate,
+            fill_phone=not args.no_phone
         )
         
         sys.exit(0 if success else 1)

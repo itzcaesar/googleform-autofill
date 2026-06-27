@@ -176,6 +176,7 @@ class Config:
     # --- realism preset ---
     realism_preset: Optional[str] = None   # e.g. "ai-survey"
     anomaly_rate: float = 0.0              # 0..1 fraction of rare-but-legal outliers
+    fill_phone: bool = True                # fill phone/WhatsApp fields with a generated number
     # --- submission ---
     count: int = 1
     delay: float = 1.0
@@ -432,6 +433,7 @@ def _strategy_obj(cfg: Config):
         calibration=calibration,
         conditionals=conditionals,
         anomaly_rate=anomaly_rate,
+        fill_phone=cfg.fill_phone,
     )
     if cfg.strategy == "fixed":
         return engine.FixedFillStrategy(text_value=cfg.fixed_text, **common)
@@ -502,6 +504,7 @@ def action_submit(cfg: Config) -> None:
             email_provider=_effective_provider(cfg),
             preset=cfg.realism_preset,
             anomaly_rate=cfg.anomaly_rate,
+            fill_phone=cfg.fill_phone,
         )
     except KeyboardInterrupt:
         print(yellow("\nInterrupted."))
@@ -791,6 +794,7 @@ def _settings_fill(cfg: Config) -> None:
         print(f"  6. Checkbox min selections          [{cfg.checkbox_min}]")
         print(f"  7. Checkbox max selections          [{cb_max}]")
         print(f"  8. Coherent identity (style+age+edu)[{cfg.coherent_identity}]")
+        print(f"  9. Fill phone/WA numbers            [{cfg.fill_phone}]")
         print("  0. Back")
         choice = ask("\nChoice", "0")
         if choice == "1":
@@ -819,6 +823,13 @@ def _settings_fill(cfg: Config) -> None:
                           "(SMP / SMA / D3 / D4-S1 / S2+). No 15-year-old with an S2."))
             else:
                 print(dim("Off: email, age and education are filled independently."))
+            pause()
+        elif choice == "9":
+            cfg.fill_phone = not cfg.fill_phone
+            if cfg.fill_phone:
+                print(dim("On: phone/WhatsApp fields get a realistic Indonesian number."))
+            else:
+                print(dim("Off: phone/WA fields will be left blank."))
             pause()
         elif choice == "0":
             return
